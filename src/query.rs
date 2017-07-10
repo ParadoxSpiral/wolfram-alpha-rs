@@ -12,14 +12,19 @@
 //! For more information, see [Wolfram|Alpha's API
 //! documentation](http://products.wolframalpha.com/api/documentation.html).
 
+
 use error::Result;
 use model::QueryResult;
+use reqwest::Client;
+use serde_xml;
 use std::collections::HashMap;
-use super::{WolframAlphaRequestSender, parse_wolfram_alpha_response};
+use std::io::Read;
+use url::Url;
 
 /// A container struct for the parameters for a query to the Wolfram|Alpha API.
 // TODO: replace these with concrete types.
 #[allow(missing_docs)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OptionalQueryParameters<'a> {
     pub format: Option<&'a str>,
     pub includepodid: Option<&'a str>,
@@ -49,47 +54,80 @@ pub struct OptionalQueryParameters<'a> {
 }
 
 /// Performs a query to the Wolfram|Alpha API.
-pub fn query<R>(
-    client: &R, appid: &str, input: &str,
-    optional_query_parameters: Option<OptionalQueryParameters>
-) -> Result<QueryResult>
-    where R: WolframAlphaRequestSender,
-{
+pub fn query(
+    client: Option<&Client>,
+    appid: &str,
+    input: &str,
+    optional_query_parameters: Option<OptionalQueryParameters>,
+) -> Result<QueryResult> {
     let mut params = HashMap::new();
     params.insert("input", input);
 
     // If present, we insert the optional parameters.
     if let Some(v) = optional_query_parameters {
-        for &(name, value) in &[("format", v.format),
-                                ("includepodid", v.includepodid),
-                                ("excludepodid", v.excludepodid),
-                                ("podtitle", v.podtitle),
-                                ("podindex", v.podindex),
-                                ("scanner", v.scanner),
-                                ("async", v.async),
-                                ("ip", v.ip),
-                                ("latlong", v.latlong),
-                                ("location", v.location),
-                                ("assumption", v.assumption),
-                                ("podstate", v.podstate),
-                                ("units", v.units),
-                                ("width", v.width),
-                                ("maxwidth", v.maxwidth),
-                                ("plotwidth", v.plotwidth),
-                                ("mag", v.mag),
-                                ("scantimeout", v.scantimeout),
-                                ("podtimeout", v.podtimeout),
-                                ("formattimeout", v.formattimeout),
-                                ("parsetimeout", v.parsetimeout),
-                                ("reinterpret", v.reinterpret),
-                                ("translation", v.translation),
-                                ("ignorecase", v.ignorecase)] {
+        for &(name, value) in &[
+            ("format", v.format),
+            ("includepodid", v.includepodid),
+            ("excludepodid", v.excludepodid),
+            ("podtitle", v.podtitle),
+            ("podindex", v.podindex),
+            ("scanner", v.scanner),
+            ("async", v.async),
+            ("ip", v.ip),
+            ("latlong", v.latlong),
+            ("location", v.location),
+            ("assumption", v.assumption),
+            ("podstate", v.podstate),
+            ("units", v.units),
+            ("width", v.width),
+            ("maxwidth", v.maxwidth),
+            ("plotwidth", v.plotwidth),
+            ("mag", v.mag),
+            ("scantimeout", v.scantimeout),
+            ("podtimeout", v.podtimeout),
+            ("formattimeout", v.formattimeout),
+            ("parsetimeout", v.parsetimeout),
+            ("reinterpret", v.reinterpret),
+            ("translation", v.translation),
+            ("ignorecase", v.ignorecase),
+        ] {
             if let Some(value) = value {
                 params.insert(name, value);
             }
         }
     }
 
-    let response = client.send_authed("query", appid, &mut params)?;
-    parse_wolfram_alpha_response(&response)
+    parse_wolfram_alpha_response(&if let Some(client) = client {
+        send_authed(client, "query", appid, &mut params)?
+    } else {
+        let client = Client::new()?;
+        send_authed(&client, "query", appid, &mut params)?
+    })
+}
+
+fn send_authed<'a>(
+    client: &Client,
+    method: &str,
+    app_id: &'a str,
+    params: &mut HashMap<&str, &'a str>,
+) -> Result<String> {
+    let url_string = format!("https://api.wolframalpha.com/v2/{}", method);
+    let mut url = url_string.parse::<Url>().expect("Unable to parse URL");
+
+    url.query_pairs_mut().extend_pairs(params.into_iter());
+    params.insert("appid", app_id);
+
+    trace!("Sending query \"{:?}\" to url: {}", params, url);
+    let mut response = client.get(url).send()?;
+    let mut result = String::new();
+    response.read_to_string(&mut result)?;
+    trace!("Query result: {}", result);
+
+    Ok(result)
+}
+
+fn parse_wolfram_alpha_response(ser: &str) -> Result<QueryResult> {
+    let parsed_response = serde_xml::deserialize(ser.as_bytes())?;
+    trace!("Parsed response: {:?}", parsed_response);
+    Ok(parsed_response)
 }

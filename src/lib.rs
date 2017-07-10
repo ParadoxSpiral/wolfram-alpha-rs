@@ -7,10 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![deny(missing_docs, non_camel_case_types, warnings)]
-#![cfg_attr(feature = "clippy", feature(plugin))]
-#![cfg_attr(feature = "clippy", plugin(clippy))]
-#![cfg_attr(feature = "nightly", feature(custom_derive, proc_macro))]
+#![deny(missing_docs)]
 
 //! A library providing Rust bindings for the Wolfram|Alpha web API.
 //!
@@ -26,96 +23,20 @@
 //! Response bodies are deserialized from XML into structs via the
 //! [`serde_xml`](https://github.com/serde-rs/xml) library.
 
-#[cfg(feature = "hyper")]
-extern crate hyper;
-
+#[macro_use]
+extern crate error_chain;
 #[macro_use]
 extern crate log;
+extern crate reqwest;
 extern crate serde;
-#[cfg(feature = "nightly")]
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_xml;
+extern crate serde_xml_rs as serde_xml;
 extern crate url;
+extern crate url_serde;
 
 mod error;
-
-pub use self::error::{Error, HttpRequestError, HttpRequestResult, Result};
+pub use error::*;
 
 pub mod model;
 pub mod query;
-// TODO: implement the `validate_query` function.
-
-use serde::Deserialize;
-use std::collections::HashMap;
-use std::fmt::Debug;
-
-fn parse_wolfram_alpha_response<T>(response: &str) -> Result<T>
-    where T: Debug + Deserialize,
-{
-    let parsed_response = serde_xml::from_str(response)?;
-    trace!("Parsed response: {:?}", parsed_response);
-    Ok(parsed_response)
-}
-
-/// Functionality for sending requests to Wolfram|Alpha via HTTP.
-///
-/// Should be implemented for clients to send requests to Wolfram|Alpha.
-pub trait WolframAlphaRequestSender {
-    /// Performs an API call to Wolfram|Alpha.
-    ///
-    /// Takes a map of parameters which get appended to the request as query
-    /// parameters. Returns the response body string.
-    fn send<'a>(&self, method: &str, params: &mut HashMap<&str, &'a str>)
-        -> HttpRequestResult<String>;
-
-    /// Make an API call to Wolfram|Alpha that contains the configured App ID.
-    ///
-    /// Takes a map of parameters which get appended to the request as query
-    /// parameters. Returns the response body string.
-    fn send_authed<'a>(&self, method: &str, app_id: &'a str, params: &mut HashMap<&str, &'a str>)
-        -> HttpRequestResult<String> {
-        params.insert("appid", app_id);
-        self.send(method, params)
-    }
-}
-
-#[cfg(feature = "hyper")]
-mod hyper_support {
-    use error::{HttpRequestError, HttpRequestResult};
-    use hyper;
-    use std::collections::HashMap;
-    use std::io::Read;
-    use super::WolframAlphaRequestSender;
-    use url::Url;
-
-    impl WolframAlphaRequestSender for hyper::Client {
-        fn send<'a>(&self, method: &str, params: &mut HashMap<&str, &'a str>)
-            -> HttpRequestResult<String> {
-            let url_string = format!("https://api.wolframalpha.com/v2/{}", method);
-            let mut url = url_string.parse::<Url>().expect("Unable to parse URL");
-
-            url.query_pairs_mut().extend_pairs(params.into_iter());
-
-            trace!("Sending query \"{:?}\" to url: {}", params, url);
-            let mut response = self.get(url).send()?;
-            let mut result = String::new();
-            response.read_to_string(&mut result)?;
-            trace!("Query result: {}", result);
-
-            Ok(result)
-        }
-    }
-
-    impl From<hyper::Error> for HttpRequestError {
-        fn from(error: hyper::Error) -> HttpRequestError {
-            match error {
-                hyper::Error::Io(e) => HttpRequestError::Io(e),
-                e => HttpRequestError::Other(Box::new(e)),
-            }
-        }
-    }
-}
-
-#[cfg(feature = "hyper")]
-pub use hyper_support::*;

@@ -1,6 +1,6 @@
 [package]
 name = "wolfram_alpha"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Nikita Pekin <contact@nikitapek.in>"]
 description = "A library providing Rust bindings for the Wolfram|Alpha API"
 repository = "https://github.com/indiv0/wolfram-alpha-rs"
@@ -23,35 +23,15 @@ include = [
     "README.md",
     "src/**/*.rs",
 ]
-build = "build.rs"
-
-[build-dependencies.serde_codegen]
-optional = true
-version = "0.8.23"
 
 [dependencies]
-log = "0.3.6"
-serde = "0.8.23"
-serde_xml = "0.8.1"
+error-chain = "0.10"
+log = "0.3"
+reqwest = "0.6"
+serde = "1.0"
+serde_derive = "1.0"
+url = "1.5"
+url_serde = "0.2"
 
-[dependencies.clippy]
-optional = true
-version = "0.0"
-
-[dependencies.hyper]
-optional = true
-version = "0.10.4"
-
-[dependencies.serde_derive]
-optional = true
-version = "0.8.23"
-
-[dependencies.url]
-features = ["serde"]
-version = "1.4.0"
-
-[features]
-default = ["hyper", "with-syntex"]
-nightly = ["serde_derive"]
-nightly-testing = ["clippy", "nightly"]
-with-syntex = ["serde_codegen"]
+[dependencies.serde-xml-rs]
+git = "https://github.com/ParadoxSpiral/serde-xml-rs.git"
