@@ -25,7 +25,7 @@ use url::Url;
 // TODO: replace these with concrete types.
 #[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct OptionalQueryParameters<'a> {
+pub struct QueryParameters<'a> {
     pub format: Option<&'a str>,
     pub includepodid: Option<&'a str>,
     pub excludepodid: Option<&'a str>,
@@ -47,10 +47,44 @@ pub struct OptionalQueryParameters<'a> {
     pub podtimeout: Option<&'a str>,
     pub formattimeout: Option<&'a str>,
     pub parsetimeout: Option<&'a str>,
+    pub totaltimeout: Option<&'a str>,
     pub reinterpret: Option<&'a str>,
     pub translation: Option<&'a str>,
     pub ignorecase: Option<&'a str>,
     pub sig: Option<&'a str>,
+}
+
+impl<'a> Default for QueryParameters<'a> {
+    fn default() -> QueryParameters<'a> {
+        QueryParameters{
+            format: Some("plaintext"),
+            includepodid: None,
+            excludepodid: None,
+            podtitle: None,
+            podindex: None,
+            scanner: None,
+            async: Some("false"),
+            ip: None,
+            latlong: None,
+            location: None,
+            assumption: None,
+            podstate: None,
+            units: Some("metric"),
+            width: Some("500"),
+            maxwidth: Some("1300"),
+            plotwidth: None,
+            mag: None,
+            scantimeout: None,
+            podtimeout: None,
+            formattimeout: None,
+            parsetimeout: None,
+            totaltimeout: None,
+            reinterpret: None,
+            translation: None,
+            ignorecase: Some("true"),
+            sig: None,
+        }
+    }
 }
 
 /// Performs a query to the Wolfram|Alpha API.
@@ -58,7 +92,7 @@ pub fn query(
     client: Option<&Client>,
     appid: &str,
     input: &str,
-    optional_query_parameters: Option<OptionalQueryParameters>,
+    optional_query_parameters: Option<QueryParameters>,
 ) -> Result<QueryResult> {
     let mut params = HashMap::new();
     params.insert("input", input);
@@ -87,9 +121,11 @@ pub fn query(
             ("podtimeout", v.podtimeout),
             ("formattimeout", v.formattimeout),
             ("parsetimeout", v.parsetimeout),
+            ("totaltimeout", v.totaltimeout),
             ("reinterpret", v.reinterpret),
             ("translation", v.translation),
             ("ignorecase", v.ignorecase),
+            ("sig", v.sig),
         ] {
             if let Some(value) = value {
                 params.insert(name, value);
