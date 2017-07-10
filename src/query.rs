@@ -114,8 +114,8 @@ fn send_authed<'a>(
     let url_string = format!("https://api.wolframalpha.com/v2/{}", method);
     let mut url = url_string.parse::<Url>().expect("Unable to parse URL");
 
-    url.query_pairs_mut().extend_pairs(params.into_iter());
     params.insert("appid", app_id);
+    url.query_pairs_mut().extend_pairs(params.into_iter());
 
     trace!("Sending query \"{:?}\" to url: {}", params, url);
     let mut response = client.get(url).send()?;
