@@ -35,7 +35,8 @@ pub struct QueryResult {
     pub host: Option<String>,
     pub server: Option<u32>,
     pub related: Option<String>,
-    pub pod: Option<Vec<Pod>>,
+    #[serde(rename = "pod")]
+    pub pods: Option<Vec<Pod>>,
     pub assumptions: Option<Assumptions>,
     pub sources: Option<Sources>,
     //pub error: Option<Error>,
@@ -228,7 +229,8 @@ pub struct Pod {
     pub id: String,
     pub numsubpods: u32,
     pub primary: Option<bool>,
-    pub subpod: Vec<Subpod>,
+    #[serde(rename="subpod")]
+    pub subpods: Vec<SubPod>,
     //pub states: Option<States>,
     pub infos: Option<Infos>,
     // TODO: find a way to parse errors.
@@ -314,23 +316,17 @@ pub struct Definition {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct Notes {
     pub count: u32,
-    pub note: Vec<Note>,
+    pub note: Vec<String>,
 }
-
-/// A note made by Wolfram|Alpha regarding a query.
-pub type Note = String;
 
 /// A subelement of `Pod`.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
-pub struct Subpod {
+pub struct SubPod {
     pub title: String,
     pub img: Option<Img>,
-    pub plaintext: Option<Plaintext>,
+    pub plaintext: Option<String>,
     //pub states: Option<States>,
 }
-
-/// A textual representation of a single subpod.
-pub type Plaintext = String;
 
 /// An HTML img element suitable for direct inclusion in a web page.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]

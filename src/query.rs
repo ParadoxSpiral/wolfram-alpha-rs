@@ -70,8 +70,8 @@ impl<'a> Default for QueryParameters<'a> {
             assumption: None,
             podstate: None,
             units: Some("metric"),
-            width: Some("500"),
-            maxwidth: Some("1300"),
+            width: None,
+            maxwidth: None,
             plotwidth: None,
             mag: None,
             scantimeout: None,
@@ -96,6 +96,7 @@ pub fn query(
 ) -> Result<QueryResult> {
     let mut params = HashMap::new();
     params.insert("input", input);
+    params.insert("appid", appid);
 
     // If present, we insert the optional parameters.
     if let Some(v) = optional_query_parameters {
@@ -134,23 +135,20 @@ pub fn query(
     }
 
     parse_wolfram_alpha_response(&if let Some(client) = client {
-        send_authed(client, "query", appid, &mut params)?
+        send_authed(client, "query", &mut params)?
     } else {
         let client = Client::new()?;
-        send_authed(&client, "query", appid, &mut params)?
+        send_authed(&client, "query", &mut params)?
     })
 }
 
 fn send_authed<'a>(
     client: &Client,
     method: &str,
-    app_id: &'a str,
     params: &mut HashMap<&str, &'a str>,
 ) -> Result<String> {
     let url_string = format!("https://api.wolframalpha.com/v2/{}", method);
     let mut url = url_string.parse::<Url>().expect("Unable to parse URL");
-
-    params.insert("appid", app_id);
     url.query_pairs_mut().extend_pairs(params.into_iter());
 
     trace!("Sending query \"{:?}\" to url: {}", params, url);
