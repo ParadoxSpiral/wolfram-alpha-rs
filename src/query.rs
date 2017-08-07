@@ -152,7 +152,7 @@ fn send_authed<'a>(
     url.query_pairs_mut().extend_pairs(params.into_iter());
 
     trace!("Sending query \"{:?}\" to url: {}", params, url);
-    let mut response = client.get(url).send()?;
+    let mut response = client.get(url)?.send()?;
     let mut result = String::new();
     response.read_to_string(&mut result)?;
     trace!("Query result: {}", result);

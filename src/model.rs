@@ -391,7 +391,7 @@ pub struct Error {
 #[cfg(test)]
 mod tests {
     use super::{Definitions, DidYouMean, DidYouMeans, Error, Img, Infos, LanguageMsg, Notes,
-                Plaintext, Pod, QueryResult, Spellcheck, State, Statelist, States, Subpod, Tips,
+                Pod, QueryResult, Spellcheck, State, Statelist, States, SubPod, Tips,
                 Warnings};
     use serde_xml::deserialize;
     use std::fs::File;
@@ -604,7 +604,7 @@ mod tests {
 
     #[test]
     fn test_subpod_deserializer() {
-        let _: Subpod = deserialize(
+        let _: SubPod = deserialize(
             read_sample_data_from_path("tests/sample-data/subpod.xml").as_bytes(),
         ).unwrap();
     }
@@ -614,12 +614,6 @@ mod tests {
         let _: Img = deserialize(
             read_sample_data_from_path("tests/sample-data/img.xml").as_bytes(),
         ).unwrap();
-    }
-
-    #[test]
-    fn test_plaintext_deserializer() {
-        let _: Plaintext = deserialize("<plaintext>pi</plaintext>".as_bytes()).unwrap();
-        let _: Option<Plaintext> = deserialize("<plaintext/>".as_bytes()).unwrap();
     }
 
     #[test]

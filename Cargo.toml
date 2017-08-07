@@ -27,10 +27,10 @@ include = [
 [dependencies]
 error-chain = "0.10"
 log = "0.3"
-reqwest = "0.6"
-serde = "1.0"
-serde_derive = "1.0"
-url = "1.5"
+reqwest = "0.7"
+serde = "1"
+serde_derive = "1"
+url = "1"
 url_serde = "0.2"
 
 [dependencies.serde-xml-rs]
