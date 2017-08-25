@@ -161,7 +161,7 @@ fn send_authed<'a>(
 }
 
 fn parse_wolfram_alpha_response(ser: &str) -> Result<QueryResult> {
-    let parsed_response = serde_xml::deserialize(ser.as_bytes())?;
+    let parsed_response = serde_xml::from_str(ser)?;
     trace!("Parsed response: {:?}", parsed_response);
     Ok(parsed_response)
 }

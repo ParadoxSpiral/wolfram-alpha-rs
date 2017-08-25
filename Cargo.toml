@@ -34,4 +34,4 @@ url = "1"
 url_serde = "0.2"
 
 [dependencies.serde-xml-rs]
-git = "https://github.com/ParadoxSpiral/serde-xml-rs.git"
+git = "https://github.com/RReverser/serde-xml-rs.git"
