@@ -137,8 +137,7 @@ pub fn query(
     parse_wolfram_alpha_response(&if let Some(client) = client {
         send_authed(client, "query", &mut params)?
     } else {
-        let client = Client::new()?;
-        send_authed(&client, "query", &mut params)?
+        send_authed(&Client::new(), "query", &mut params)?
     })
 }
 
@@ -152,7 +151,7 @@ fn send_authed<'a>(
     url.query_pairs_mut().extend_pairs(params.into_iter());
 
     trace!("Sending query \"{:?}\" to url: {}", params, url);
-    let mut response = client.get(url)?.send()?;
+    let mut response = client.get(url).send()?;
     let mut result = String::new();
     response.read_to_string(&mut result)?;
     trace!("Query result: {}", result);
