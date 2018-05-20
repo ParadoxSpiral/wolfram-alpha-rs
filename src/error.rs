@@ -9,12 +9,28 @@
 
 #![allow(missing_docs)]
 
-error_chain! {
-    foreign_links {
-        Deserialization(::serde_xml::Error);
-        Reqwest(::reqwest::Error);
-        Io(::std::io::Error);
-        Utf8(::std::string::FromUtf8Error);
+pub type Result<T> = ::std::result::Result<T, Error>;
+
+pub enum Error {
+    Deserialization(::serde_xml::Error),
+    Reqwest(::reqwest::Error),
+    Io(::std::io::Error),
+}
+
+impl From<::serde_xml::Error> for Error {
+    fn from(other: ::serde_xml::Error) -> Error {
+        Error::Deserialization(other)
     }
-    errors {}
+}
+
+impl From<::reqwest::Error> for Error {
+    fn from(other: ::reqwest::Error) -> Error {
+        Error::Reqwest(other)
+    }
+}
+
+impl From<::std::io::Error> for Error {
+    fn from(other: ::std::io::Error) -> Error {
+        Error::Io(other)
+    }
 }

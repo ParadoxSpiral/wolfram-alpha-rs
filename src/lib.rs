@@ -24,8 +24,6 @@
 //! [`serde_xml`](https://github.com/serde-rs/xml) library.
 
 #[macro_use]
-extern crate error_chain;
-#[macro_use]
 extern crate log;
 extern crate reqwest;
 extern crate serde;
