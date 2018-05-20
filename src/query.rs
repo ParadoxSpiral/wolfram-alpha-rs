@@ -12,7 +12,6 @@
 //! For more information, see [Wolfram|Alpha's API
 //! documentation](http://products.wolframalpha.com/api/documentation.html).
 
-
 use error::Result;
 use model::QueryResult;
 use reqwest::Client;
@@ -56,7 +55,7 @@ pub struct QueryParameters<'a> {
 
 impl<'a> Default for QueryParameters<'a> {
     fn default() -> QueryParameters<'a> {
-        QueryParameters{
+        QueryParameters {
             format: Some("plaintext"),
             includepodid: None,
             excludepodid: None,

@@ -24,7 +24,7 @@ pub struct QueryResult {
     //pub error: bool,
     pub numpods: u32,
     pub version: Option<String>, // TODO: replace this with a better type.
-    pub datatypes: String, // TODO: possibly replace this with an enum?
+    pub datatypes: String,       // TODO: possibly replace this with an enum?
     pub timing: f64,
     pub timedout: String,
     pub timedoutpods: Option<String>,
@@ -229,7 +229,7 @@ pub struct Pod {
     pub id: String,
     pub numsubpods: u32,
     pub primary: Option<bool>,
-    #[serde(rename="subpod")]
+    #[serde(rename = "subpod")]
     pub subpods: Vec<SubPod>,
     //pub states: Option<States>,
     pub infos: Option<Infos>,
@@ -241,7 +241,6 @@ pub struct Pod {
     pub definitions: Option<Definitions>,
     pub notes: Option<Notes>,
 }
-
 
 /// A series of `State` attributes.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -390,9 +389,10 @@ pub struct Error {
 
 #[cfg(test)]
 mod tests {
-    use super::{Definitions, DidYouMean, DidYouMeans, Error, Img, Infos, LanguageMsg, Notes,
-                Pod, QueryResult, Spellcheck, State, Statelist, States, SubPod, Tips,
-                Warnings};
+    use super::{
+        Definitions, DidYouMean, DidYouMeans, Error, Img, Infos, LanguageMsg, Notes, Pod,
+        QueryResult, Spellcheck, State, Statelist, States, SubPod, Tips, Warnings,
+    };
     use serde_xml::from_str;
     use std::fs::File;
     use std::io::Read;
@@ -410,120 +410,117 @@ mod tests {
 
     #[test]
     fn test_query_result_deserializer() {
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result_1.xml"),
-        ).unwrap();
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result_2.xml"),
-        ).unwrap();
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result_3.xml"),
-        ).unwrap();
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result_4.xml"),
-        ).unwrap();
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result_5.xml"),
-        ).unwrap();
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result_6.xml"),
-        ).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result_1.xml",
+        )).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result_2.xml",
+        )).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result_3.xml",
+        )).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result_4.xml",
+        )).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result_5.xml",
+        )).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result_6.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_query_result_with_error_deserializer() {
-        let _: QueryResult = from_str(
-            &read_sample_data_from_path("tests/sample-data/query_result-with-error.xml"),
-        ).unwrap();
+        let _: QueryResult = from_str(&read_sample_data_from_path(
+            "tests/sample-data/query_result-with-error.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_notes_deserializer() {
-        let _: Notes = from_str(
-            &read_sample_data_from_path("tests/sample-data/notes.xml"),
-        ).unwrap();
+        let _: Notes =
+            from_str(&read_sample_data_from_path("tests/sample-data/notes.xml")).unwrap();
     }
 
     #[test]
     fn test_languagemsg_deserializer() {
-        let _: LanguageMsg = from_str(
-            &read_sample_data_from_path("tests/sample-data/languagemsg.xml"),
-        ).unwrap();
+        let _: LanguageMsg = from_str(&read_sample_data_from_path(
+            "tests/sample-data/languagemsg.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_definitions_deserializer() {
-        let _: Definitions = from_str(
-            &read_sample_data_from_path("tests/sample-data/definitions.xml"),
-        ).unwrap();
+        let _: Definitions = from_str(&read_sample_data_from_path(
+            "tests/sample-data/definitions.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_didyoumean_deserializer() {
-        let _: DidYouMean = from_str(
-            &read_sample_data_from_path("tests/sample-data/didyoumean.xml"),
-        ).unwrap();
+        let _: DidYouMean = from_str(&read_sample_data_from_path(
+            "tests/sample-data/didyoumean.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_didyoumeans_deserializer() {
-        let _: DidYouMeans = from_str(
-            &read_sample_data_from_path("tests/sample-data/didyoumeans.xml"),
-        ).unwrap();
+        let _: DidYouMeans = from_str(&read_sample_data_from_path(
+            "tests/sample-data/didyoumeans.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_warning_deserializer() {
-        let _: Spellcheck = from_str(
-            &read_sample_data_from_path("tests/sample-data/spellcheck.xml"),
-        ).unwrap();
+        let _: Spellcheck = from_str(&read_sample_data_from_path(
+            "tests/sample-data/spellcheck.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_warnings_deserializer() {
-        let _: Warnings = from_str(
-            &read_sample_data_from_path("tests/sample-data/warnings.xml"),
-        ).unwrap();
+        let _: Warnings = from_str(&read_sample_data_from_path(
+            "tests/sample-data/warnings.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_tips_deserializer() {
-        let _: Tips = from_str(
-            &read_sample_data_from_path("tests/sample-data/tips.xml"),
-        ).unwrap();
+        let _: Tips = from_str(&read_sample_data_from_path("tests/sample-data/tips.xml")).unwrap();
     }
 
     #[test]
     fn test_state_deserializer() {
-        let _: State = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/state.xml"),
-        ).unwrap();
+        let _: State = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/state.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_statelist_deserializer() {
-        let _: Statelist = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/statelist.xml"),
-        ).unwrap();
+        let _: Statelist = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/statelist.xml",
+        )).unwrap();
     }
 
     #[test]
     fn test_states_deserializer() {
-        let _: States = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/states.xml"),
-        ).unwrap();
-        let _: States = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/states-multiple-states.xml"),
-        ).unwrap();
-        let _: States = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/states-multiple-statelists.xml"),
-        ).unwrap();
-        let _: States = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/states-out-of-order.xml"),
-        ).unwrap();
-        let sts: States = from_str(
-            &read_sample_data_from_path("tests/sample-data/state/states-out-of-order-complex.xml"),
-        ).unwrap();
+        let _: States = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/states.xml",
+        )).unwrap();
+        let _: States = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/states-multiple-states.xml",
+        )).unwrap();
+        let _: States = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/states-multiple-statelists.xml",
+        )).unwrap();
+        let _: States = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/states-out-of-order.xml",
+        )).unwrap();
+        let sts: States = from_str(&read_sample_data_from_path(
+            "tests/sample-data/state/states-out-of-order-complex.xml",
+        )).unwrap();
         assert_eq!(
             sts,
             States {
@@ -593,36 +590,29 @@ mod tests {
 
     #[test]
     fn test_pod_deserializer() {
-        let _: Pod = from_str(
-            &read_sample_data_from_path("tests/sample-data/pod.xml"),
-        ).unwrap();
+        let _: Pod = from_str(&read_sample_data_from_path("tests/sample-data/pod.xml")).unwrap();
     }
 
     #[test]
     fn test_subpod_deserializer() {
-        let _: SubPod = from_str(
-            &read_sample_data_from_path("tests/sample-data/subpod.xml"),
-        ).unwrap();
+        let _: SubPod =
+            from_str(&read_sample_data_from_path("tests/sample-data/subpod.xml")).unwrap();
     }
 
     #[test]
     fn test_img_deserializer() {
-        let _: Img = from_str(
-            &read_sample_data_from_path("tests/sample-data/img.xml"),
-        ).unwrap();
+        let _: Img = from_str(&read_sample_data_from_path("tests/sample-data/img.xml")).unwrap();
     }
 
     #[test]
     fn test_infos_deserializer() {
-        let _: Infos = from_str(
-            &read_sample_data_from_path("tests/sample-data/infos.xml"),
-        ).unwrap();
+        let _: Infos =
+            from_str(&read_sample_data_from_path("tests/sample-data/infos.xml")).unwrap();
     }
 
     #[test]
     fn test_error_deserializer() {
-        let _: Error = from_str(
-            &read_sample_data_from_path("tests/sample-data/error.xml"),
-        ).unwrap();
+        let _: Error =
+            from_str(&read_sample_data_from_path("tests/sample-data/error.xml")).unwrap();
     }
 }
