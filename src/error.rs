@@ -6,15 +6,23 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
 #![allow(missing_docs)]
 
 pub type Result<T> = ::std::result::Result<T, Error>;
 
+#[derive(Debug)]
 pub enum Error {
     Deserialization(::serde_xml::Error),
     Reqwest(::reqwest::Error),
     Io(::std::io::Error),
+}
+
+impl std::error::Error for Error { }
+
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 impl From<::serde_xml::Error> for Error {
